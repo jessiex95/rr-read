@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#FFF8EC">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<title>RR Story</title>
+<meta name="apple-mobile-web-app-title" content="RR Story">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Fredoka:wght@500;600&display=swap">
+<style>
+[hidden] { display: none !important; }
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); box-sizing: border-box; height: 100%; }
+body { margin: 0; }
+/* Layout: one fixed 1194x834 iPad-landscape stage, scaled to fit any screen. Single warm-paper look on purpose. */
+:root {
+  --paper: #FFF8EC;
+  --card: #FFFFFF;
+  --ink: #111111;
+  --muted: #E6DCCB;
+  --accent: #E2603F;
+  --accent-deep: #B8452A;
+  --hi: #FFE08A;
+  --edge: #EADFCB;
+  --font-read: 'Andika', 'Comic Neue', 'Trebuchet MS', sans-serif;
+  --font-title: 'Fredoka', 'Andika', 'Trebuchet MS', sans-serif;
+  color-scheme: light;
+}
+html, body { height: 100%; }
+body {
+  background: var(--paper); color: var(--ink); overflow: hidden;
+  font-family: var(--font-read);
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+#fit {
+  height: 100%; box-sizing: border-box; display: flex; align-items: center; justify-content: center;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 12px;
+}
+#frame { position: relative; overflow: hidden; }
+#stage { width: 1194px; height: 834px; position: absolute; left: 0; top: 0; transform-origin: 0 0; background: var(--paper); }
+button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; padding: 0; }
+button:focus-visible { outline: 4px solid #2C8C99; outline-offset: 3px; }
+.ic { stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.ln { stroke: #26201E; stroke-width: 3; stroke-linecap: round; fill: none; }
+.round { width: 72px; height: 72px; border-radius: 36px; background: var(--card); box-shadow: 0 2px 0 var(--edge); display: flex; align-items: center; justify-content: center; }
+.round.go { background: var(--accent); color: #FFFFFF; box-shadow: 0 2px 0 var(--accent-deep); }
+.round.on { background: var(--ink); color: #FFFFFF; box-shadow: none; }
+.round[disabled] { opacity: .35; cursor: default; }
+
+/* Library */
+#library { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 40px; }
+.book { width: 330px; display: flex; flex-direction: column; gap: 16px; text-align: left; }
+.cover { width: 330px; height: 330px; border-radius: 28px; overflow: hidden; box-shadow: 0 8px 0 var(--edge); transition: transform .15s ease; }
+.book:active .cover { transform: scale(.97); }
+.cover svg { display: block; width: 100%; height: 100%; }
+.btitle { font-family: var(--font-title); font-weight: 600; font-size: 34px; line-height: 1.1; color: var(--ink); }
+.brand { position: absolute; left: 36px; top: 28px; display: flex; align-items: center; gap: 14px; }
+.brand .logo { width: 64px; height: 64px; border-radius: 16px; overflow: hidden; box-shadow: 0 3px 0 var(--edge); }
+.brand .logo svg { display: block; }
+.brand span { font-family: var(--font-title); font-weight: 600; font-size: 34px; color: var(--ink); letter-spacing: .3px; }
+.bar { height: 12px; border-radius: 6px; background: var(--muted); overflow: hidden; }
+.bar > span { display: block; height: 100%; background: var(--accent); border-radius: 6px; }
+
+/* Reader */
+#reader { position: absolute; inset: 0; box-sizing: border-box; padding: 20px 28px 24px; display: flex; flex-direction: column; gap: 16px; }
+.top { display: flex; justify-content: space-between; align-items: center; }
+.mid { flex: 1; display: flex; gap: 28px; min-height: 0; }
+.art { width: 640px; height: 640px; border-radius: 28px; overflow: hidden; flex-shrink: 0; }
+.art svg { display: block; width: 640px; height: 640px; }
+.text { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 18px; font-size: 40px; line-height: 1.32; color: var(--ink); }
+.line { display: flex; flex-wrap: wrap; }
+.w { padding: 0 5px; margin: 0 1px; border-radius: 12px; min-height: 52px; color: var(--ink); transition: background .12s; }
+.w.hi { background: var(--hi); }
+.bottom { display: flex; justify-content: space-between; align-items: center; }
+.dots { display: flex; gap: 6px; align-items: center; }
+.dot { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
+.dot span { display: block; width: 14px; height: 14px; border-radius: 7px; background: var(--muted); transition: width .2s, background .2s; }
+.dot.seen span { background: #F2B19F; }
+.dot.now span { width: 34px; background: var(--accent); }
+.fade { animation: fade .25s ease; }
+@keyframes fade { from { opacity: .3; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .fade { animation: none; } .cover, .w, .dot span { transition: none; } }
+</style>
+</head>
+<body>
+
+<div id="fit"><div id="frame"><div id="stage">
+  <div class="brand" id="brand"><div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="64" height="64" aria-hidden="true">
+<defs><clipPath id="rrclip"><rect width="200" height="200"></rect></clipPath></defs>
+<g clip-path="url(#rrclip)">
+<rect width="200" height="200" fill="#CFE8F3"></rect>
+<circle cx="168" cy="34" r="16" fill="#FFD36E"></circle>
+<path d="M0 158 Q100 136 200 158 V200 H0Z" fill="#8CC56E"></path>
+<g transform="translate(140 53) scale(1.43)">
+<path d="M-19 60 L19 60 L34 118 L-34 118Z" fill="#2C8C99"></path>
+<path d="M-24 32 Q-46 40 -42 66 Q-38 72 -33 66 Q-32 48 -18 42Z" fill="#26201E"></path><path d="M24 32 Q46 40 42 66 Q38 72 33 66 Q32 48 18 42Z" fill="#26201E"></path>
+<circle cx="-30" cy="40" r="4.5" fill="#F29A86"></circle><circle cx="30" cy="40" r="4.5" fill="#F29A86"></circle>
+<circle cx="0" cy="36" r="28" fill="#F6D2B4"></circle>
+<path d="M-29 38 Q-30 6 0 6 Q30 6 29 38 Q18 20 0 22 Q-18 20 -29 38Z" fill="#26201E"></path>
+<circle cx="-10" cy="40" r="3.2" fill="#26201E"></circle><circle cx="10" cy="40" r="3.2" fill="#26201E"></circle>
+<circle cx="-17" cy="49" r="4.5" fill="#F29A86" opacity="0.6"></circle><circle cx="17" cy="49" r="4.5" fill="#F29A86" opacity="0.6"></circle>
+<path d="M-7 50 Q0 56 7 50" stroke="#26201E" stroke-width="3" stroke-linecap="round" fill="none"></path>
+</g>
+<g transform="translate(64 52) scale(-1.25 1.25)">
+<path d="M-24 70 L24 70 L42 154 L-42 154Z" fill="#E2603F"></path>
+<path d="M24 14 Q60 16 56 58 Q54 82 40 92 Q48 62 26 30Z" fill="#26201E"></path><circle cx="28" cy="16" r="6" fill="#F5B83D"></circle>
+<circle cx="0" cy="42" r="32" fill="#F6D2B4"></circle>
+<path d="M-33 44 Q-34 6 0 6 Q34 6 33 44 Q22 22 0 24 Q-22 22 -33 44Z" fill="#26201E"></path>
+<circle cx="-11" cy="46" r="3.5" fill="#26201E"></circle><circle cx="11" cy="46" r="3.5" fill="#26201E"></circle>
+<circle cx="-19" cy="56" r="5" fill="#F29A86" opacity="0.6"></circle><circle cx="19" cy="56" r="5" fill="#F29A86" opacity="0.6"></circle>
+<path d="M-8 58 Q0 65 8 58" stroke="#26201E" stroke-width="3" stroke-linecap="round" fill="none"></path>
+</g>
+</g>
+</svg></div><span>RR Story</span></div>
+  <div id="library"></div>
+  <div id="reader" hidden>
+    <div class="top">
+      <button class="round" id="home" aria-label="Back to the bookshelf"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path class="ic" d="M4 11l8-7 8 7"></path><path class="ic" d="M6 10v10h12V10"></path><path class="ic" d="M10 20v-5h4v5"></path></svg></button>
+      <button class="round" id="read" aria-label="Read this page to me"></button>
+    </div>
+    <div class="mid">
+      <div class="art" id="art"></div>
+      <div class="text" id="text"></div>
+    </div>
+    <div class="bottom">
+      <button class="round" id="prev" aria-label="Previous page"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path class="ic" d="M15 5l-7 7 7 7"></path></svg></button>
+      <div class="dots" id="dots"></div>
+      <button class="round go" id="next" aria-label="Next page"></button>
+    </div>
+  </div>
+</div></div></div>
+
+<script>
+(function () {
+  var ICON_SPEAK = '<svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path class="ic" d="M4 9v6h4l5 4V5L8 9H4z"></path><path class="ic" d="M16.5 8.5a5 5 0 0 1 0 7"></path><path class="ic" d="M19 6a8.5 8.5 0 0 1 0 12"></path></svg>';
+  var ICON_STOP = '<svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"></rect></svg>';
+  var ICON_NEXT = '<svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path class="ic" d="M9 5l7 7-7 7"></path></svg>';
+  var ICON_AGAIN = '<svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path class="ic" d="M4 12a8 8 0 1 0 2.4-5.7"></path><path class="ic" d="M4 4v4.5h4.5"></path></svg>';
+
+  /* ---------- Story data ---------- */
+  var BOOKS = [
+    { id: "leaders", title: "Two Leaders", cover: 8, pages: [
+      { t: ["Ruiyou and Ruiyun are sisters.", "Ruiyou likes red. Ruiyun likes blue.", "They love to play together."],
+        s: { house: 1, ax: 330, bx: 430 } },
+      { t: ["One day, Mom gives them a map.", "\"Find the treasure!\" says Mom.", "\"I will lead!\" says Ruiyou.", "\"No, I will lead!\" says Ruiyun."],
+        s: { mom: 1, map: 1, ax: 350, bx: 470 } },
+      { t: ["Ruiyou runs fast.", "Ruiyun runs fast, too.", "BONK! They bump into each other.", "Now they both sit in the grass."],
+        s: { bonk: 1, ax: 300, ar: -12, bx: 420, br: 12 } },
+      { t: ["They look at the map.", "It says: Go to the tall tree.", "\"This way!\" says Ruiyou.", "\"Let's go!\" says Ruiyun."],
+        s: { tree: 1, map: 1, ax: 330, bx: 220 } },
+      { t: ["Next, they come to a pond.", "Ruiyun looks down.", "She sees a red key under a rock.", "\"I found it!\" she yells."],
+        s: { pond: 1, rock: 1, key: 1, ax: 200, bx: 380 } },
+      { t: ["\"You found the key!\" says Ruiyou.", "\"You found the way!\" says Ruiyun.", "They give each other a hug."],
+        s: { pond: 1, rock: 1, keyB: 1, ax: 320, ar: 6, bx: 385, br: -6 } },
+      { t: ["The map says: Go up the hill.", "The hill is very steep.", "Their legs get tired.", "They hold hands. \"We can go slow.\""],
+        s: { steep: 1, map: 1, keyB: 1, ax: 354, ay: 152, ar: -8, bx: 296, by: 220, br: -8 } },
+      { t: ["At the top, they find a box.", "It is locked!", "Ruiyou has the map. Ruiyun has the key.", "Click! The box opens."],
+        s: { steep: 1, box: 1, open: 1, map: 1, keyB: 1, ax: 500, ay: 40, bx: 455, by: 63 } },
+      { t: ["Inside are two shiny crowns.", "One for Ruiyou. One for Ruiyun.", "\"Two leaders!\" they shout."],
+        s: { steep: 1, box: 1, open: 1, crown: 1, ax: 500, ay: 40, bx: 455, by: 63 } },
+      { t: ["They walk home hand in hand.", "\"Who will lead tomorrow?\" asks Mom.", "\"We will!\" they say. \"Together!\"", "The End"],
+        s: { house: 1, mom: 1, crown: 1, sky: "#F8D3B0", sunY: 300, ax: 360, bx: 440 } }
+    ]},
+    { id: "splash", title: "Splash Day", cover: 6, pages: [
+      { t: ["It is a hot, sunny day.", "Ruiyun and Ruiyou put on their swimsuits.", "\"Let's go to the water park!\""],
+        s: { house: 1, ax: 330, bx: 430 } },
+      { t: ["The water park has so much to see.", "Slides! Pools! A bucket of water!", "\"Wow!\" say the sisters."],
+        s: { deck: 1, pool: 1, umb: 1, bucket: 1, ax: 250, bx: 370 } },
+      { t: ["They go to the lazy river.", "They sit in two round tubes.", "The water takes them around and around."],
+        s: { river: 1, tube: 1, ax: 250, bx: 430 } },
+      { t: ["Next, they stand under a yellow bucket.", "It fills up with water.", "Tip, tip, tip... SPLASH!", "Now they are wet from head to toe!"],
+        s: { deck: 1, bucket: 1, stream: 1, drops: 1, ax: 400, bx: 500 } },
+      { t: ["\"Look at that slide!\" says Ruiyun.", "\"It is so tall!\" says Ruiyou.", "They hold hands and go up the steps."],
+        s: { deck: 1, slide: 1, ax: 300, bx: 200 } },
+      { t: ["They sit at the top.", "One, two, three...", "WHEEE! Down they go, side by side."],
+        s: { deck: 1, slide: 1, ax: 548, ay: 12, bx: 500, by: 16 } },
+      { t: ["SPLASH! They land in the pool.", "Ruiyun laughs. Ruiyou laughs.", "\"Again! Again!\""],
+        s: { deck: 1, inPool: 1, drops: 1, ax: 300, bx: 410 } },
+      { t: ["Then they fill two cups with water.", "Ruiyou splashes Ruiyun.", "Ruiyun splashes Ruiyou.", "Now they are both wet!"],
+        s: { deck: 1, umb: 1, cup: 1, drops: 1, ax: 280, ar: 6, bx: 440, br: -6 } },
+      { t: ["The sun goes down.", "The sisters wrap up in soft towels.", "They are tired and happy."],
+        s: { deck: 1, umb: 1, towel: 1, sky: "#F8D3B0", sunY: 260, ax: 300, bx: 410 } },
+      { t: ["\"What was the best part?\" asks Mom.", "\"The slide!\" says Ruiyun.", "\"The splash!\" says Ruiyou.", "\"Can we come back tomorrow?\"", "The End"],
+        s: { deck: 1, mom: 1, towel: 1, sky: "#F8D3B0", sunY: 320, ax: 330, bx: 440 } }
+    ]},
+    { id: "corgi", title: "Mango's Day", cover: 9, pages: [
+      { t: ["Ruiyou and Ruiyun have a dog.", "Her name is Mango.", "Mango is a corgi with big ears and short legs."],
+        s: { house: 1, ax: 250, bx: 480, dog: { x: 360, f: 1, tongue: 1 } } },
+      { t: ["Good morning! Mango is hungry.", "Ruiyun gets the food.", "Ruiyou fills the bowl.", "Crunch, crunch, crunch!"],
+        s: { house: 1, bowlF: 470, ax: 250, bx: 580, dog: { x: 370, f: 1, eat: 1 } } },
+      { t: ["Now Mango needs a drink.", "Ruiyou gets the water.", "Ruiyun fills the bowl.", "Lap, lap, lap!"],
+        s: { house: 1, bowlW: 470, ax: 250, bx: 580, dog: { x: 370, f: 1, eat: 1 } } },
+      { t: ["Time for a walk!", "Ruiyun puts on the leash.", "Ruiyou opens the door."],
+        s: { house: 1, ax: 120, bx: 500, leash: "b", dog: { x: 360, f: 1, tongue: 1 } } },
+      { t: ["They walk down the street.", "They take turns with the leash.", "Mango trots along. Trot, trot, trot!"],
+        s: { tree: 1, ax: 170, bx: 290, leash: "a", dog: { x: 440, f: 1, tongue: 1 } } },
+      { t: ["Mango stops to sniff a flower.", "Sniff, sniff, sniff...", "Then she licks it! The sisters giggle."],
+        s: { flower: 570, ax: 200, bx: 320, leash: "b", dog: { x: 460, f: 1, tongue: 1 } } },
+      { t: ["At home, they get Mango's toys.", "Ruiyun throws the ball.", "Ruiyou squeaks the duck.", "Squeak, squeak!"],
+        s: { house: 1, duck: 1, ball: 1, ax: 250, bx: 560, br: -10, dog: { x: 400, f: 1, tongue: 1 } } },
+      { t: ["\"Let's race!\" says Ruiyou.", "\"Ready, set, go!\" says Ruiyun.", "The sisters run.", "Mango runs, too!"],
+        s: { zoom: 1, ax: 330, ar: 10, bx: 460, br: 10, dog: { x: 180, f: 1, tongue: 1 } } },
+      { t: ["Who is the fastest?", "It is Mango! Her short legs go zoom!", "Everyone laughs and falls in the grass."],
+        s: { zoomDog: 1, ax: 210, ar: -14, bx: 330, br: 14, dog: { x: 520, f: 1, tongue: 1 } } },
+      { t: ["Now Mango is sleepy.", "She lies down with the sisters.", "\"We love you,\" they say.", "The End"],
+        s: { sky: "#F8D3B0", sunY: 300, hearts: 1, ax: 240, bx: 500, dog: { x: 365, f: 1, lie: 1 } } }
+    ]}
+  ];
+
+  /* ---------- Illustration ---------- */
+  var BASE = { sky: "#CFE8F3", sunY: 110, ax: 300, ay: 365, ar: 0, bx: 400, by: 368, br: 0 };
+  var HAIR = "#26201E", SKIN = "#F2C9A5", FACE = "#F6D2B4", SHOE = "#3F3A44";
+
+  function face(r, eyeY, eyeR, cheekY, smileY) {
+    return '<circle cx="-' + r + '" cy="' + eyeY + '" r="' + eyeR + '" fill="' + HAIR + '"></circle><circle cx="' + r + '" cy="' + eyeY + '" r="' + eyeR + '" fill="' + HAIR + '"></circle>' +
+      '<circle cx="-' + (r + 8) + '" cy="' + cheekY + '" r="5" fill="#F29A86" opacity="0.6"></circle><circle cx="' + (r + 8) + '" cy="' + cheekY + '" r="5" fill="#F29A86" opacity="0.6"></circle>' +
+      '<path class="ln" d="M-8 ' + smileY + ' Q0 ' + (smileY + 7) + ' 8 ' + smileY + '"></path>';
+  }
+
+  function ruiyou(s) {
+    var g = '<g transform="translate(' + s.ax + ' ' + s.ay + ') rotate(' + (s.ar || 0) + ')">';
+    g += '<rect x="-16" y="148" width="11" height="47" rx="5" fill="' + SKIN + '"></rect><rect x="5" y="148" width="11" height="47" rx="5" fill="' + SKIN + '"></rect>';
+    g += '<ellipse cx="-12" cy="196" rx="11" ry="6" fill="' + SHOE + '"></ellipse><ellipse cx="12" cy="196" rx="11" ry="6" fill="' + SHOE + '"></ellipse>';
+    g += '<rect x="-48" y="78" width="12" height="54" rx="6" fill="' + SKIN + '"></rect><rect x="36" y="78" width="12" height="54" rx="6" fill="' + SKIN + '"></rect>';
+    g += '<path d="M-24 70 L24 70 L42 154 L-42 154Z" fill="#E2603F"></path>';
+    if (s.towel) g += '<path d="M-50 74 L50 74 L52 160 L-52 160Z" fill="#F7D46B"></path><path d="M-50 100 L50 100 M-51 128 L51 128" stroke="#FFFFFF" stroke-width="6"></path>';
+    if (s.tube) g += '<ellipse cx="0" cy="138" rx="56" ry="17" fill="#F5B83D"></ellipse><ellipse cx="0" cy="132" rx="36" ry="7" fill="#E2603F"></ellipse>';
+    g += '<path d="M24 14 Q60 16 56 58 Q54 82 40 92 Q48 62 26 30Z" fill="' + HAIR + '"></path><circle cx="28" cy="16" r="6" fill="#F5B83D"></circle>';
+    g += '<circle cx="0" cy="42" r="32" fill="' + FACE + '"></circle>';
+    g += '<path d="M-33 44 Q-34 6 0 6 Q34 6 33 44 Q22 22 0 24 Q-22 22 -33 44Z" fill="' + HAIR + '"></path>';
+    g += face(11, 46, 3.5, 56, 58);
+    if (s.crown) g += '<path d="M-22 12 L-22 -14 L-11 -2 L0 -18 L11 -2 L22 -14 L22 12Z" fill="#F5B83D"></path>';
+    if (s.map) g += '<rect x="34" y="98" width="52" height="40" rx="3" fill="#F6E7C1"></rect><path d="M42 128 Q56 106 76 112" stroke="#C98A3A" stroke-width="2.5" stroke-dasharray="5 5" fill="none"></path><path class="ln" style="stroke:#E0412B" d="M72 120 l8 -8 m0 8 l-8 -8"></path>';
+    if (s.cup) g += '<path d="M40 112 L60 112 L57 136 L43 136Z" fill="#FFFFFF" stroke="#9AA7B0" stroke-width="2"></path>';
+    if (s.duck) g += '<ellipse cx="54" cy="128" rx="17" ry="12" fill="#F5D33D"></ellipse><circle cx="62" cy="112" r="9" fill="#F5D33D"></circle><path d="M70 111 L80 114 L70 117Z" fill="#F5A623"></path><circle cx="64" cy="110" r="1.8" fill="' + HAIR + '"></circle>';
+    return g + '</g>';
+  }
+
+  function corgi(d) {
+    var f = d.f || 1, y = 560 + (d.lie ? 14 : 0), C = "#E8A55A", W = "#FFF4E6";
+    var g = '<g transform="translate(' + d.x + ' ' + y + ') scale(' + f + ' 1)">';
+    if (!d.lie) g += '<rect x="-40" y="-24" width="12" height="24" rx="5" fill="' + C + '"></rect><rect x="-24" y="-24" width="12" height="24" rx="5" fill="' + C + '"></rect><rect x="18" y="-24" width="12" height="24" rx="5" fill="' + C + '"></rect><rect x="34" y="-24" width="12" height="24" rx="5" fill="' + C + '"></rect>';
+    g += '<circle cx="-52" cy="-46" r="15" fill="' + W + '"></circle>';
+    g += '<ellipse cx="0" cy="-40" rx="54" ry="26" fill="' + C + '"></ellipse><ellipse cx="6" cy="-26" rx="36" ry="12" fill="' + W + '"></ellipse>';
+    var hy = d.eat ? -40 : -68, hx = d.eat ? 62 : 54;
+    g += '<g transform="translate(' + hx + ' ' + hy + ')">';
+    g += '<path d="M-18 -14 L-22 -46 L-2 -20Z" fill="' + C + '"></path><path d="M2 -20 L10 -48 L18 -16Z" fill="' + C + '"></path><path d="M-16 -18 L-18 -38 L-6 -21Z" fill="#F29A86"></path><path d="M5 -21 L10 -40 L14 -18Z" fill="#F29A86"></path>';
+    g += '<circle cx="0" cy="0" r="25" fill="' + C + '"></circle><path d="M-2 -24 Q4 -6 2 8 L10 8 Q8 -8 4 -24Z" fill="' + W + '"></path>';
+    g += '<ellipse cx="18" cy="8" rx="15" ry="11" fill="' + W + '"></ellipse><circle cx="31" cy="5" r="4.5" fill="' + HAIR + '"></circle>';
+    g += d.lie ? '<path class="ln" d="M4 -6 Q9 -2 14 -6"></path>' : '<circle cx="9" cy="-5" r="3.5" fill="' + HAIR + '"></circle>';
+    if (d.tongue) g += '<path d="M16 16 Q20 28 26 16Z" fill="#F07C8A"></path>';
+    g += '</g>';
+    g += '<rect x="' + (hx - 26) + '" y="' + (hy + 10) + '" width="10" height="22" rx="4" fill="#E0412B" transform="rotate(-20 ' + (hx - 21) + ' ' + (hy + 21) + ')"></rect>';
+    return g + '</g>';
+  }
+
+  function hand(s, who, tx) {
+    if (who === "a") return tx < s.ax ? [s.ax - 42, s.ay + 130] : [s.ax + 42, s.ay + 130];
+    return tx < s.bx ? [s.bx - 46, s.by + 140] : [s.bx + 46, s.by + 140];
+  }
+
+  function ruiyun(s) {
+    var g = '<g transform="translate(' + s.bx + ' ' + s.by + ') rotate(' + (s.br || 0) + ') scale(1.3)">';
+    g += '<rect x="-13" y="112" width="10" height="36" rx="5" fill="' + SKIN + '"></rect><rect x="3" y="112" width="10" height="36" rx="5" fill="' + SKIN + '"></rect>';
+    g += '<ellipse cx="-9" cy="148" rx="10" ry="5.5" fill="' + SHOE + '"></ellipse><ellipse cx="9" cy="148" rx="10" ry="5.5" fill="' + SHOE + '"></ellipse>';
+    g += '<rect x="-40" y="66" width="11" height="42" rx="5" fill="' + SKIN + '"></rect><rect x="29" y="66" width="11" height="42" rx="5" fill="' + SKIN + '"></rect>';
+    g += '<path d="M-19 60 L19 60 L34 118 L-34 118Z" fill="#2C8C99"></path>';
+    if (s.towel) g += '<path d="M-42 62 L42 62 L44 124 L-44 124Z" fill="#B9E1F0"></path><path d="M-42 82 L42 82 M-43 104 L43 104" stroke="#FFFFFF" stroke-width="5"></path>';
+    if (s.tube) g += '<ellipse cx="0" cy="106" rx="46" ry="14" fill="#F29A86"></ellipse><ellipse cx="0" cy="101" rx="29" ry="6" fill="#2C8C99"></ellipse>';
+    g += '<path d="M-24 32 Q-46 40 -42 66 Q-38 72 -33 66 Q-32 48 -18 42Z" fill="' + HAIR + '"></path><path d="M24 32 Q46 40 42 66 Q38 72 33 66 Q32 48 18 42Z" fill="' + HAIR + '"></path>';
+    g += '<circle cx="-30" cy="40" r="4.5" fill="#F29A86"></circle><circle cx="30" cy="40" r="4.5" fill="#F29A86"></circle>';
+    g += '<circle cx="0" cy="36" r="28" fill="' + FACE + '"></circle>';
+    g += '<path d="M-29 38 Q-30 6 0 6 Q30 6 29 38 Q18 20 0 22 Q-18 20 -29 38Z" fill="' + HAIR + '"></path>';
+    g += face(10, 40, 3.2, 49, 50);
+    if (s.crown) g += '<path d="M-19 10 L-19 -12 L-9 -2 L0 -16 L9 -2 L19 -12 L19 10Z" fill="#F5B83D"></path>';
+    if (s.keyB) g += '<g transform="translate(44 104) rotate(-30)"><circle cx="0" cy="0" r="8" fill="#E0412B"></circle><rect x="6" y="-2.5" width="20" height="5" fill="#E0412B"></rect></g>';
+    if (s.cup) g += '<path d="M-48 86 L-32 86 L-34 104 L-46 104Z" fill="#FFFFFF" stroke="#9AA7B0" stroke-width="2"></path>';
+    return g + '</g>';
+  }
+
+  function drop(x, y, k) {
+    return '<path transform="translate(' + x + ' ' + y + ') scale(' + (k || 1) + ')" d="M0 -12 Q8 2 0 7 Q-8 2 0 -12Z" fill="#5BB8E0"></path>';
+  }
+
+  function sceneSVG(raw) {
+    var s = Object.assign({}, BASE, raw);
+    var o = '<svg viewBox="0 0 680 680" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">';
+    o += '<rect width="680" height="680" fill="' + s.sky + '"></rect>';
+    o += '<circle cx="560" cy="' + s.sunY + '" r="46" fill="#FFD36E"></circle>';
+    o += '<g fill="#FFFFFF" opacity="0.9"><ellipse cx="140" cy="110" rx="56" ry="20"></ellipse><ellipse cx="180" cy="96" rx="36" ry="22"></ellipse><ellipse cx="380" cy="70" rx="44" ry="16"></ellipse></g>';
+    o += '<path d="M0 470 Q170 380 340 450 T680 430 L680 680 L0 680Z" fill="#B9DB95"></path>';
+    o += '<path d="M0 540 Q340 500 680 545 L680 680 L0 680Z" fill="#8CC56E"></path>';
+    if (s.deck) o += '<rect x="0" y="515" width="680" height="165" fill="#EAD9B5"></rect><path d="M0 560 H680 M0 610 H680 M120 515 V680 M260 515 V680 M400 515 V680 M540 515 V680" stroke="#DCC79E" stroke-width="2"></path>';
+    if (s.pool) o += '<rect x="0" y="600" width="680" height="80" fill="#6CC3E6"></rect><path d="M40 630 q20 -8 40 0 t40 0 M300 650 q20 -8 40 0 t40 0 M520 625 q20 -8 40 0 t40 0" stroke="#FFFFFF" stroke-width="3" fill="none"></path>';
+    if (s.river) o += '<path d="M0 480 Q200 450 340 495 T680 480 L680 680 L0 680Z" fill="#6CC3E6"></path>';
+    if (s.house) o += '<rect x="40" y="400" width="150" height="150" fill="#F3E2C7"></rect><path d="M26 408 L115 330 L204 408Z" fill="#C9583C"></path><rect x="98" y="470" width="38" height="80" rx="6" fill="#8A5A3C"></rect><rect x="56" y="430" width="30" height="30" rx="4" fill="#9CD3E8"></rect><rect x="146" y="430" width="30" height="30" rx="4" fill="#9CD3E8"></rect>';
+    if (s.tree) o += '<rect x="488" y="300" width="40" height="250" rx="10" fill="#8A5A3C"></rect><circle cx="508" cy="250" r="96" fill="#5DA34F"></circle><circle cx="440" cy="300" r="62" fill="#6BB35B"></circle><circle cx="580" cy="300" r="62" fill="#6BB35B"></circle><circle cx="470" cy="230" r="10" fill="#E2603F"></circle><circle cx="560" cy="260" r="10" fill="#E2603F"></circle>';
+    if (s.pond) o += '<ellipse cx="480" cy="600" rx="170" ry="44" fill="#7FC4DE"></ellipse><ellipse cx="540" cy="596" rx="20" ry="13" fill="#FFFFFF"></ellipse><circle cx="556" cy="582" r="9" fill="#FFFFFF"></circle><path d="M563 582 L574 585 L563 588Z" fill="#F5A623"></path>';
+    if (s.rock) o += '<ellipse cx="470" cy="548" rx="52" ry="26" fill="#A7A39B"></ellipse><ellipse cx="458" cy="540" rx="22" ry="8" fill="#C4C0B8"></ellipse>';
+    if (s.key) o += '<g transform="translate(500 560) rotate(-20)"><circle r="10" fill="#E0412B"></circle><circle r="4" fill="#8CC56E"></circle><rect x="8" y="-3" width="26" height="6" fill="#E0412B"></rect><rect x="26" y="2" width="5" height="8" fill="#E0412B"></rect></g>';
+    if (s.steep) o += '<path d="M120 680 Q420 140 680 220 L680 680Z" fill="#A7D488"></path><path d="M200 680 Q440 260 680 300 L680 680Z" fill="#96C977"></path>';
+    if (s.box) {
+      o += '<g transform="translate(600 210)"><rect x="-42" y="-50" width="84" height="52" rx="6" fill="#B5733F"></rect><rect x="-42" y="-30" width="84" height="8" fill="#8A5A3C"></rect>';
+      o += s.open ? '<g transform="rotate(-28 -46 -50)"><rect x="-46" y="-70" width="92" height="20" rx="6" fill="#C98A50"></rect></g><g fill="#FFE59A"><circle cx="-20" cy="-60" r="5"></circle><circle cx="18" cy="-74" r="6"></circle><circle cx="34" cy="-56" r="4"></circle></g>'
+                  : '<rect x="-46" y="-66" width="92" height="20" rx="6" fill="#C98A50"></rect>';
+      o += '</g>';
+    }
+    if (s.umb) o += '<rect x="86" y="330" width="8" height="215" fill="#8A5A3C"></rect><path d="M10 340 Q90 260 170 340Z" fill="#E2603F"></path><path d="M62 340 Q90 266 118 340Z" fill="#FFFFFF"></path>';
+    if (s.bucket) {
+      o += '<rect x="560" y="180" width="14" height="350" fill="#C9583C"></rect><rect x="640" y="180" width="14" height="350" fill="#C9583C"></rect><rect x="552" y="176" width="110" height="12" rx="4" fill="#B04A31"></rect>';
+      o += '<g transform="translate(606 150) rotate(' + (s.stream ? -40 : -8) + ')"><path d="M-34 -30 L34 -30 L26 30 L-26 30Z" fill="#F5B83D"></path><rect x="-38" y="-36" width="76" height="10" rx="4" fill="#E0A21F"></rect></g>';
+      if (s.stream) o += '<path d="M575 130 Q510 170 470 300 Q440 330 420 330 Q470 260 500 190 Q530 140 585 120Z" fill="#9AD6EE" opacity="0.9"></path>';
+    }
+    if (s.slide) {
+      o += '<rect x="482" y="214" width="12" height="320" fill="#C9583C"></rect><rect x="598" y="214" width="12" height="320" fill="#C9583C"></rect>';
+      o += '<path d="M610 214 V534 M640 214 V534" stroke="#B04A31" stroke-width="8"></path><path d="M610 260 H640 M610 310 H640 M610 360 H640 M610 410 H640 M610 460 H640 M610 510 H640" stroke="#B04A31" stroke-width="6"></path>';
+      o += '<rect x="470" y="204" width="176" height="16" rx="4" fill="#B04A31"></rect>';
+      o += '<path d="M470 210 Q420 300 380 400 Q330 520 150 545 L150 600 Q370 570 430 410 Q470 310 530 210Z" fill="#4FA3E0"></path>';
+      o += '<path d="M500 210 Q446 305 406 405 Q352 545 150 572" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="10 10" fill="none"></path>';
+    }
+    if (s.mom) {
+      o += '<g transform="translate(130 300)"><rect x="-14" y="190" width="11" height="60" rx="5" fill="' + SHOE + '"></rect><rect x="3" y="190" width="11" height="60" rx="5" fill="' + SHOE + '"></rect>';
+      o += '<path d="M-30 86 L30 86 L42 196 L-42 196Z" fill="#6E7FD6"></path><rect x="-48" y="92" width="13" height="70" rx="6" fill="' + SKIN + '"></rect><rect x="35" y="92" width="13" height="70" rx="6" fill="' + SKIN + '" transform="rotate(-30 41 92)"></rect>';
+      o += '<path d="M-38 70 Q-44 0 0 0 Q44 0 38 70Z" fill="' + HAIR + '"></path><circle cx="0" cy="46" r="32" fill="' + FACE + '"></circle><path d="M-32 40 Q-28 8 0 10 Q28 8 32 40 Q16 24 0 26 Q-16 24 -32 40Z" fill="' + HAIR + '"></path>';
+      o += '<circle cx="-11" cy="50" r="3.5" fill="' + HAIR + '"></circle><circle cx="11" cy="50" r="3.5" fill="' + HAIR + '"></circle><path class="ln" d="M-8 62 Q0 68 8 62"></path></g>';
+    }
+    if (s.flower) o += '<path d="M' + s.flower + ' 560 V490" stroke="#4F9A45" stroke-width="5"></path><g fill="#F29A86"><circle cx="' + (s.flower - 12) + '" cy="480" r="11"></circle><circle cx="' + (s.flower + 12) + '" cy="480" r="11"></circle><circle cx="' + s.flower + '" cy="468" r="11"></circle><circle cx="' + s.flower + '" cy="492" r="11"></circle></g><circle cx="' + s.flower + '" cy="480" r="8" fill="#F5D33D"></circle>';
+    if (s.bowlF) o += '<path d="M' + (s.bowlF - 34) + ' 540 L' + (s.bowlF + 34) + ' 540 L' + (s.bowlF + 26) + ' 562 L' + (s.bowlF - 26) + ' 562Z" fill="#2C8C99"></path><g fill="#9A6337"><circle cx="' + (s.bowlF - 14) + '" cy="537" r="6"></circle><circle cx="' + s.bowlF + '" cy="534" r="6"></circle><circle cx="' + (s.bowlF + 14) + '" cy="537" r="6"></circle></g>';
+    if (s.bowlW) o += '<path d="M' + (s.bowlW - 34) + ' 540 L' + (s.bowlW + 34) + ' 540 L' + (s.bowlW + 26) + ' 562 L' + (s.bowlW - 26) + ' 562Z" fill="#E2603F"></path><ellipse cx="' + s.bowlW + '" cy="540" rx="32" ry="6" fill="#6CC3E6"></ellipse>';
+    if (s.zoom || s.zoomDog) o += '<path d="M40 420 H140 M20 470 H110 M60 520 H150" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"></path>';
+    if (s.zoomDog) o += '<path d="M390 470 H450 M370 500 H440 M400 530 H450" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"></path>';
+    o += ruiyou(s) + ruiyun(s);
+    if (s.dog) {
+      o += corgi(s.dog);
+      if (s.leash) {
+        var cx = s.dog.x + 36 * (s.dog.f || 1), cy = 504, h = hand(s, s.leash, cx);
+        o += '<path d="M' + h[0] + ' ' + h[1] + ' Q' + ((h[0] + cx) / 2) + ' ' + (Math.max(h[1], cy) + 40) + ' ' + cx + ' ' + cy + '" stroke="#E0412B" stroke-width="4" fill="none" stroke-linecap="round"></path>';
+      }
+    }
+    if (s.ball) o += '<circle cx="470" cy="330" r="18" fill="#E0412B"></circle><path d="M454 322 Q470 338 486 322" stroke="#F5D33D" stroke-width="4" fill="none"></path><path d="M560 400 Q520 330 490 332" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="6 8" fill="none"></path>';
+    if (s.hearts) o += '<g fill="#E2603F"><path transform="translate(360 400)" d="M0 10 C-20 -6 -12 -22 0 -12 C12 -22 20 -6 0 10Z"></path><path transform="translate(320 360) scale(.7)" d="M0 10 C-20 -6 -12 -22 0 -12 C12 -22 20 -6 0 10Z"></path><path transform="translate(400 350) scale(.8)" d="M0 10 C-20 -6 -12 -22 0 -12 C12 -22 20 -6 0 10Z"></path></g>';
+    if (s.river) o += '<path d="M0 530 Q340 510 680 530 L680 680 L0 680Z" fill="#6CC3E6" opacity="0.92"></path><path d="M60 570 q20 -8 40 0 t40 0 M320 590 q20 -8 40 0 t40 0 M520 560 q20 -8 40 0 t40 0" stroke="#FFFFFF" stroke-width="3" fill="none"></path>';
+    if (s.inPool) o += '<path d="M0 498 Q170 488 340 498 T680 498 L680 680 L0 680Z" fill="#6CC3E6" opacity="0.93"></path><path d="M40 540 q20 -8 40 0 t40 0 M300 600 q20 -8 40 0 t40 0 M520 550 q20 -8 40 0 t40 0" stroke="#FFFFFF" stroke-width="3" fill="none"></path>';
+    if (s.drops) o += drop(250, 330) + drop(470, 300, 1.2) + drop(360, 270) + drop(520, 380) + drop(210, 420, .9) + drop(420, 220, .8) + drop(560, 300, .9);
+    if (s.bonk) o += '<g fill="#F5B83D"><path d="M360 300 l8 18 20 2 -15 13 5 20 -18 -11 -18 11 5 -20 -15 -13 20 -2z"></path><path d="M300 270 l5 11 12 1 -9 8 3 12 -11 -7 -11 7 3 -12 -9 -8 12 -1z"></path><path d="M420 262 l5 11 12 1 -9 8 3 12 -11 -7 -11 7 3 -12 -9 -8 12 -1z"></path></g>';
+    return o + '</svg>';
+  }
+
+  /* ---------- Speech ---------- */
+  var SAY = { "Ruiyou": "Ray-yo", "Ruiyun": "Ray-yoon", "Ruiyun's": "Ray-yoon's" };
+  var PREF = ["Microsoft Ava Online (Natural)", "Microsoft Jenny Online (Natural)", "Microsoft Aria Online (Natural)", "Microsoft Emma Online (Natural)",
+    "Ava (Premium)", "Zoe (Premium)", "Ava (Enhanced)", "Zoe (Enhanced)", "Samantha (Enhanced)", "Allison (Enhanced)", "Susan (Enhanced)",
+    "Google US English", "Ava", "Zoe", "Samantha", "Allison", "Susan", "Nicky", "Karen", "Moira", "Tessa"];
+  var FEMALE = /(ava|zoe|samantha|allison|susan|nicky|karen|moira|tessa|jenny|aria|emma|victoria|fiona|kate)/i;
+  var voice = null;
+  function pickVoice() {
+    try {
+      var en = (window.speechSynthesis.getVoices() || []).filter(function (v) { return /^en/i.test(v.lang); });
+      for (var i = 0; i < PREF.length; i++) {
+        var p = PREF[i];
+        var hit = en.find(function (v) { return v.name === p; }) || en.find(function (v) { return v.name.indexOf(p) === 0; });
+        if (hit) return hit;
+      }
+      return en.find(function (v) { return FEMALE.test(v.name); }) || en[0] || null;
+    } catch (e) { return null; }
+  }
+  try { if (window.speechSynthesis) { voice = pickVoice(); window.speechSynthesis.onvoiceschanged = function () { voice = pickVoice(); }; } } catch (e) {}
+  function stopSpeech() { try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {} }
+  function speak(text, onBoundary, onEnd) {
+    try {
+      var ss = window.speechSynthesis;
+      if (!ss) { onEnd && onEnd(); return; }
+      ss.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      if (!voice) voice = pickVoice();
+      if (voice) { u.voice = voice; u.lang = voice.lang; } else u.lang = "en-US";
+      u.rate = 0.9; u.pitch = 1;
+      if (onBoundary) u.onboundary = onBoundary;
+      u.onend = function () { onEnd && onEnd(); };
+      u.onerror = function () { onEnd && onEnd(); };
+      ss.speak(u);
+    } catch (e) { onEnd && onEnd(); }
+  }
+  function clean(t) { return t.replace(/[^A-Za-z']/g, ""); }
+
+  /* ---------- Progress (this device only) ---------- */
+  function getProg(id) { try { var v = parseInt(localStorage.getItem("ss_" + id), 10); return isNaN(v) ? -1 : v; } catch (e) { return -1; } }
+  function setProg(id, p) { try { if (p > getProg(id)) localStorage.setItem("ss_" + id, String(p)); localStorage.setItem("ss_at_" + id, String(p)); } catch (e) {} }
+  function getAt(id) { try { var v = parseInt(localStorage.getItem("ss_at_" + id), 10); return isNaN(v) ? 0 : v; } catch (e) { return 0; } }
+
+  /* ---------- Screens ---------- */
+  var $ = function (id) { return document.getElementById(id); };
+  var book = null, page = 0, reading = false, wordEls = [];
+
+  function esc(t) { return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
+
+  function showLibrary() {
+    stopSpeech(); reading = false;
+    $("reader").hidden = true; $("library").hidden = false; $("brand").hidden = false;
+    $("library").innerHTML = BOOKS.map(function (b, i) {
+      var done = Math.max(0, getProg(b.id) + 1);
+      return '<button class="book" data-b="' + i + '" aria-label="Open ' + esc(b.title) + '">' +
+        '<div class="cover">' + sceneSVG(b.pages[b.cover].s) + '</div>' +
+        '<div class="btitle">' + esc(b.title) + '</div>' +
+        '<div class="bar" aria-hidden="true"><span style="width:' + (done * 10) + '%"></span></div></button>';
+    }).join("");
+  }
+
+  function openBook(i) {
+    book = BOOKS[i];
+    var at = getAt(book.id);
+    page = (at >= 9 || at < 0) ? 0 : at;
+    $("library").hidden = true; $("brand").hidden = true; $("reader").hidden = false;
+    renderPage();
+  }
+
+  function setReadBtn() {
+    var b = $("read");
+    b.innerHTML = reading ? ICON_STOP : ICON_SPEAK;
+    b.classList.toggle("on", reading);
+    b.setAttribute("aria-label", reading ? "Stop reading" : "Read this page to me");
+  }
+
+  function highlight(i) {
+    wordEls.forEach(function (el, k) { el.classList.toggle("hi", k === i); });
+  }
+
+  function renderPage() {
+    stopSpeech(); reading = false; setReadBtn();
+    setProg(book.id, page);
+    var pg = book.pages[page];
+    $("art").innerHTML = sceneSVG(pg.s);
+    $("art").classList.remove("fade"); void $("art").offsetWidth; $("art").classList.add("fade");
+    var idx = 0;
+    $("text").innerHTML = pg.t.map(function (line) {
+      return '<div class="line">' + line.split(" ").map(function (w) {
+        var c = clean(w);
+        return '<button class="w" data-i="' + (idx++) + '" data-say="' + esc(SAY[c] || c) + '" aria-label="' + esc(c) + '">' + esc(w) + '</button>';
+      }).join("") + '</div>';
+    }).join("");
+    wordEls = Array.prototype.slice.call($("text").querySelectorAll(".w"));
+    $("prev").disabled = page === 0;
+    var last = page === book.pages.length - 1;
+    $("next").innerHTML = last ? ICON_AGAIN : ICON_NEXT;
+    $("next").setAttribute("aria-label", last ? "Read the book again" : "Next page");
+    $("dots").innerHTML = book.pages.map(function (_, i) {
+      return '<button class="dot' + (i === page ? " now" : (i < page ? " seen" : "")) + '" data-p="' + i + '" aria-label="Page ' + (i + 1) + '"><span></span></button>';
+    }).join("");
+  }
+
+  function readPage() {
+    if (reading) { stopSpeech(); reading = false; setReadBtn(); highlight(-1); return; }
+    var words = wordEls.map(function (el) { return el.getAttribute("data-say"); });
+    var offs = [], pos = 0;
+    words.forEach(function (w) { offs.push(pos); pos += w.length + 1; });
+    reading = true; setReadBtn(); highlight(0);
+    speak(words.join(" "), function (e) {
+      var k = 0; for (var j = 0; j < offs.length; j++) if (offs[j] <= e.charIndex) k = j;
+      highlight(k);
+    }, function () { reading = false; setReadBtn(); highlight(-1); });
+  }
+
+  $("library").addEventListener("click", function (e) {
+    var b = e.target.closest(".book"); if (b) openBook(+b.getAttribute("data-b"));
+  });
+  $("text").addEventListener("click", function (e) {
+    var w = e.target.closest(".w"); if (!w) return;
+    reading = false; setReadBtn();
+    var i = +w.getAttribute("data-i"); highlight(i);
+    speak(w.getAttribute("data-say"), null, function () { highlight(-1); });
+  });
+  $("dots").addEventListener("click", function (e) {
+    var d = e.target.closest(".dot"); if (d) { page = +d.getAttribute("data-p"); renderPage(); }
+  });
+  $("home").addEventListener("click", showLibrary);
+  $("read").addEventListener("click", readPage);
+  $("prev").addEventListener("click", function () { if (page > 0) { page--; renderPage(); } });
+  $("next").addEventListener("click", function () { page = page === book.pages.length - 1 ? 0 : page + 1; renderPage(); });
+
+  /* Swipe to turn pages */
+  var sx = null;
+  $("reader").addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
+  $("reader").addEventListener("touchend", function (e) {
+    if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; sx = null;
+    if (Math.abs(dx) < 80) return;
+    if (dx < 0 && page < book.pages.length - 1) { page++; renderPage(); }
+    else if (dx > 0 && page > 0) { page--; renderPage(); }
+  }, { passive: true });
+
+  /* Fit the 1194x834 stage to the screen */
+  function fit() {
+    var f = $("fit"), cs = getComputedStyle(f);
+    var w = f.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    var h = f.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    var k = Math.max(0.1, Math.min(w / 1194, h / 834));
+    $("frame").style.width = (1194 * k) + "px"; $("frame").style.height = (834 * k) + "px";
+    $("stage").style.transform = "scale(" + k + ")";
+  }
+  window.addEventListener("resize", fit);
+  fit();
+  showLibrary();
+})();
+</script>
+
+</body>
+</html>
