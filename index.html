@@ -364,7 +364,7 @@ button:focus-visible { outline: 4px solid #2C8C99; outline-offset: 3px; }
     if (s.fort === "closed") o += '<path d="M' + (fx - hw + 24) + ' 560 L' + (fx - hw + 46) + ' 336 Q' + fx + ' 374 ' + (fx + hw - 46) + ' 336 L' + (fx + hw - 24) + ' 560Z" fill="' + SHEET + '" stroke="' + SHEETLN + '" stroke-width="3"></path><path d="M' + (fx - 50) + ' 380 L' + (fx - 56) + ' 556 M' + (fx + 20) + ' 384 L' + (fx + 26) + ' 556 M' + (fx + 90) + ' 372 L' + (fx + 96) + ' 556" stroke="' + SHEETLN + '" stroke-width="3" fill="none"></path>';
     o += pillow(fx - hw + 4, 544, "#F5B83D", -8) + pillow(fx + hw - 4, 544, "#E2603F", 8);
     if (s.wiggle) o += '<path d="M130 420 Q112 450 130 480 M104 400 Q80 450 104 500 M570 420 Q588 450 570 480 M596 400 Q620 450 596 500" stroke="#7B6A8F" stroke-width="5" stroke-linecap="round" fill="none"></path>';
-    if (s.tail) o += '<g transform="translate(556 560)"><rect x="-16" y="-24" width="11" height="24" rx="5" fill="#E8A55A"></rect><rect x="2" y="-24" width="11" height="24" rx="5" fill="#E8A55A"></rect><ellipse cx="0" cy="-34" rx="22" ry="22" fill="#E8A55A"></ellipse><circle cx="8" cy="-40" r="14" fill="#FFF4E6"></circle></g>';
+    if (s.tail) o += '<g transform="translate(' + fx + ' 560)"><rect x="-26" y="30" width="14" height="30" rx="6" fill="#E8A55A"></rect><rect x="12" y="30" width="14" height="30" rx="6" fill="#E8A55A"></rect><path d="M-40 6 Q-40 -10 0 -10 Q40 -10 40 6 L38 40 Q0 52 -38 40Z" fill="#E8A55A"></path><circle cx="0" cy="22" r="19" fill="#FFF4E6"></circle><path d="M-52 4 Q-62 -10 -52 -24 M52 4 Q62 -10 52 -24" stroke="#7B6A8F" stroke-width="4" stroke-linecap="round" fill="none"></path></g>';
     return o;
   }
 
