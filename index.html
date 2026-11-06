@@ -56,12 +56,12 @@ button:focus-visible { outline: 4px solid #2C8C99; outline-offset: 3px; }
 .round[disabled] { opacity: .35; cursor: default; }
 
 /* Library */
-#library { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 40px; }
-.book { width: 330px; display: flex; flex-direction: column; gap: 16px; text-align: left; }
-.cover { width: 330px; height: 330px; border-radius: 28px; overflow: hidden; box-shadow: 0 8px 0 var(--edge); transition: transform .15s ease; }
+#library { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 36px; }
+.book { width: 260px; display: flex; flex-direction: column; gap: 16px; text-align: left; }
+.cover { width: 260px; height: 260px; border-radius: 28px; overflow: hidden; box-shadow: 0 8px 0 var(--edge); transition: transform .15s ease; }
 .book:active .cover { transform: scale(.97); }
 .cover svg { display: block; width: 100%; height: 100%; }
-.btitle { font-family: var(--font-title); font-weight: 600; font-size: 34px; line-height: 1.1; color: var(--ink); }
+.btitle { font-family: var(--font-title); font-weight: 600; font-size: 30px; line-height: 1.1; color: var(--ink); }
 .brand { position: absolute; left: 36px; top: 28px; display: flex; align-items: center; gap: 14px; }
 .brand .logo { width: 64px; height: 64px; border-radius: 16px; overflow: hidden; box-shadow: 0 3px 0 var(--edge); }
 .brand .logo svg { display: block; }
@@ -213,6 +213,28 @@ button:focus-visible { outline: 4px solid #2C8C99; outline-offset: 3px; }
       { t: ["Now Mango is sleepy.", "She lies down with the sisters.", "\"We love you,\" they say.", "The End"],
         s: { sky: "#F8D3B0", sunY: 300, hearts: 1, ax: 240, bx: 500, dog: { x: 365, f: 1, lie: 1 } } }
     ]}
+    ,{ id: "fort", title: "The Blanket Fort", cover: 5, pages: [
+      { t: ["It is a rainy day.", "Ruiyou and Ruiyun are at home.", "\"Let's build a fort!\" says Ruiyou.", "\"Yes!\" says Ruiyun."],
+        s: { room: 1, bed: 2, ax: 300, bx: 420 } },
+      { t: ["They run to the bed.", "They pull off the blanket.", "They pull off the sheet, too.", "Whoosh!"],
+        s: { room: 1, bed: 1, linen: 1, ax: 330, ar: -6, bx: 450, br: 6 } },
+      { t: ["Ruiyou puts the sheet on the chairs.", "Ruiyun puts the blanket on top.", "It falls down! They try again.", "It falls down again."],
+        s: { room: 1, fort: "fall", ax: 80, bx: 590 } },
+      { t: ["\"I have an idea,\" says Ruiyun.", "She gets the pillows.", "The pillows hold up the fort.", "It stands!"],
+        s: { room: 1, fort: "open", ax: 60, bx: 600 } },
+      { t: ["Mango runs in.", "She runs under the sheet.", "The whole fort wiggles!"],
+        s: { room: 1, fort: "open", wiggle: 1, ax: 60, bx: 600, dog: { x: 350, f: 1, tongue: 1 } } },
+      { t: ["Now the fort is done.", "It is soft and cozy.", "Ruiyou, Ruiyun, and Mango go inside.", "Tap, tap, tap goes the rain."],
+        s: { room: 1, fort: "open", ax: 270, bx: 380, dog: { x: 480, f: -1, tongue: 1 } } },
+      { t: ["Mom comes in.", "She looks at the bed.", "No blanket. No sheet. No pillows."],
+        s: { room: 1, bed: 1, fort: "closed", hide: 1, mom: 1, momX: 620 } },
+      { t: ["\"Oh my,\" says Mom.", "She wants to laugh. She wants to sigh.", "She does both!", "\"Where are my girls?\""],
+        s: { room: 1, bed: 1, fort: "closed", hide: 1, mom: 1, momX: 620, ques: 1 } },
+      { t: ["Mom looks under the table.", "No girls.", "Then the fort wiggles.", "Giggle, giggle! Mango's tail sticks out."],
+        s: { room: 1, table: 1, fort: "closed", wiggle: 1, tail: 1, hide: 1, mom: 1, momX: 620 } },
+      { t: ["\"I found you!\" says Mom.", "\"Again!\" say Ruiyou and Ruiyun.", "Now Mom hides in the fort.", "The girls look for her.", "The End"],
+        s: { room: 1, fort: "open", ax: 270, bx: 380, dog: { x: 480, f: -1, tongue: 1 }, hearts: 1 } }
+    ]}
   ];
 
   /* ---------- Illustration ---------- */
@@ -290,6 +312,62 @@ button:focus-visible { outline: 4px solid #2C8C99; outline-offset: 3px; }
     return '<path transform="translate(' + x + ' ' + y + ') scale(' + (k || 1) + ')" d="M0 -12 Q8 2 0 7 Q-8 2 0 -12Z" fill="#5BB8E0"></path>';
   }
 
+
+  /* Indoor pieces for The Blanket Fort */
+  var SHEET = "#FDF1F4", SHEETLN = "#E9C9D3", BLUE = "#5BA3C9", BLUED = "#3E87AD";
+  function roomSVG(s) {
+    var o = '<rect width="680" height="520" fill="#F7E6CB"></rect><rect y="500" width="680" height="180" fill="#D8B08A"></rect><rect y="490" width="680" height="14" fill="#C99A72"></rect>';
+    o += '<path d="M0 560 H680 M0 620 H680 M120 504 V680 M300 504 V680 M470 504 V680 M600 504 V680" stroke="#C99A72" stroke-width="2" opacity=".6"></path>';
+    o += '<rect x="240" y="60" width="170" height="150" rx="10" fill="#9DB7C8"></rect><path d="M262 90 l-8 22 M292 70 l-8 22 M322 100 l-8 22 M352 74 l-8 22 M382 104 l-8 22 M272 140 l-8 22 M312 150 l-8 22 M352 138 l-8 22 M390 150 l-8 22" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"></path>';
+    o += '<path d="M325 60 V210 M240 135 H410" stroke="#FFFFFF" stroke-width="8"></path><rect x="240" y="60" width="170" height="150" rx="10" fill="none" stroke="#FFFFFF" stroke-width="8"></rect>';
+    return o;
+  }
+  function bedSVG(k) {
+    var o = '<rect x="8" y="388" width="16" height="167" rx="5" fill="#8A5A3C"></rect><rect x="134" y="448" width="14" height="107" rx="5" fill="#8A5A3C"></rect>';
+    o += '<rect x="14" y="472" width="130" height="58" rx="8" fill="' + (k === 2 ? "#F2A58E" : "#D4DCE8") + '"></rect>';
+    if (k === 2) o += '<ellipse cx="52" cy="462" rx="32" ry="14" fill="#FFFFFF"></ellipse><path d="M84 474 V528" stroke="#E58F7A" stroke-width="6"></path>';
+    else o += '<path d="M24 488 H134 M24 506 H134" stroke="#BFC9D9" stroke-width="3"></path>';
+    return o;
+  }
+  function tableSVG() {
+    return '<rect x="6" y="468" width="150" height="16" rx="6" fill="#A9713F"></rect><rect x="18" y="484" width="12" height="72" rx="4" fill="#8A5A3C"></rect><rect x="132" y="484" width="12" height="72" rx="4" fill="#8A5A3C"></rect>';
+  }
+  function linenSVG() {
+    return '<ellipse cx="200" cy="548" rx="86" ry="24" fill="' + BLUE + '"></ellipse><path d="M130 546 Q200 530 270 546" stroke="' + BLUED + '" stroke-width="4" fill="none"></path>' +
+      '<ellipse cx="560" cy="552" rx="72" ry="20" fill="' + SHEET + '" stroke="' + SHEETLN + '" stroke-width="3"></ellipse>';
+  }
+  function chair(x) {
+    return '<rect x="' + (x - 26) + '" y="330" width="52" height="12" rx="4" fill="#A9713F"></rect><rect x="' + (x - 26) + '" y="250" width="12" height="92" rx="4" fill="#8A5A3C"></rect><rect x="' + (x - 26) + '" y="342" width="10" height="214" rx="4" fill="#8A5A3C"></rect><rect x="' + (x + 16) + '" y="342" width="10" height="214" rx="4" fill="#8A5A3C"></rect>';
+  }
+  function pillow(x, y, c, r) {
+    return '<g transform="translate(' + x + ' ' + y + ') rotate(' + r + ')"><rect x="-32" y="-18" width="64" height="36" rx="14" fill="' + c + '"></rect><path d="M-16 0 H16" stroke="#FFFFFF" stroke-width="3" opacity=".7"></path></g>';
+  }
+  function fortBack(s) {
+    var fx = 350, hw = 190, o = "";
+    if (s.fort === "fall") {
+      o += chair(260) + chair(440);
+      o += '<path d="M240 336 Q350 470 460 336 L460 360 Q350 500 240 360Z" fill="' + SHEET + '" stroke="' + SHEETLN + '" stroke-width="3"></path>';
+      o += '<ellipse cx="350" cy="548" rx="96" ry="26" fill="' + BLUE + '"></ellipse><path d="M270 546 Q350 528 430 546" stroke="' + BLUED + '" stroke-width="4" fill="none"></path>';
+      return o;
+    }
+    o += '<path d="M' + (fx - hw + 30) + ' 560 L' + (fx - hw + 55) + ' 330 L' + (fx + hw - 55) + ' 330 L' + (fx + hw - 30) + ' 560Z" fill="#7B6A8F"></path>';
+    o += '<path d="M' + (fx - hw) + ' 560 L' + (fx - hw + 40) + ' 300 L' + (fx - hw + 55) + ' 330 L' + (fx - hw + 30) + ' 560Z" fill="' + SHEET + '" stroke="' + SHEETLN + '" stroke-width="3"></path>';
+    o += '<path d="M' + (fx + hw) + ' 560 L' + (fx + hw - 40) + ' 300 L' + (fx + hw - 55) + ' 330 L' + (fx + hw - 30) + ' 560Z" fill="' + SHEET + '" stroke="' + SHEETLN + '" stroke-width="3"></path>';
+    return o;
+  }
+  function fortFront(s) {
+    var fx = 350, hw = 190, o = "";
+    if (s.fort === "fall") return o;
+    o += '<path d="M' + (fx - hw + 22) + ' 340 L' + (fx - hw + 42) + ' 290 Q' + fx + ' 262 ' + (fx + hw - 42) + ' 290 L' + (fx + hw - 22) + ' 340 Q' + fx + ' 372 ' + (fx - hw + 22) + ' 340Z" fill="' + SHEET + '" stroke="' + SHEETLN + '" stroke-width="3"></path>';
+    o += '<path d="M' + (fx - hw + 36) + ' 316 L' + (fx - hw + 52) + ' 282 Q' + fx + ' 258 ' + (fx + hw - 52) + ' 282 L' + (fx + hw - 36) + ' 316 Q' + fx + ' 340 ' + (fx - hw + 36) + ' 316Z" fill="' + BLUE + '"></path>';
+    o += '<g fill="#FFFFFF" opacity=".85"><circle cx="' + (fx - 90) + '" cy="300" r="6"></circle><circle cx="' + (fx - 30) + '" cy="296" r="6"></circle><circle cx="' + (fx + 30) + '" cy="296" r="6"></circle><circle cx="' + (fx + 90) + '" cy="300" r="6"></circle><circle cx="' + (fx - 60) + '" cy="318" r="6"></circle><circle cx="' + fx + '" cy="322" r="6"></circle><circle cx="' + (fx + 60) + '" cy="318" r="6"></circle></g>';
+    if (s.fort === "closed") o += '<path d="M' + (fx - hw + 24) + ' 560 L' + (fx - hw + 46) + ' 336 Q' + fx + ' 374 ' + (fx + hw - 46) + ' 336 L' + (fx + hw - 24) + ' 560Z" fill="' + SHEET + '" stroke="' + SHEETLN + '" stroke-width="3"></path><path d="M' + (fx - 50) + ' 380 L' + (fx - 56) + ' 556 M' + (fx + 20) + ' 384 L' + (fx + 26) + ' 556 M' + (fx + 90) + ' 372 L' + (fx + 96) + ' 556" stroke="' + SHEETLN + '" stroke-width="3" fill="none"></path>';
+    o += pillow(fx - hw + 4, 544, "#F5B83D", -8) + pillow(fx + hw - 4, 544, "#E2603F", 8);
+    if (s.wiggle) o += '<path d="M130 420 Q112 450 130 480 M104 400 Q80 450 104 500 M570 420 Q588 450 570 480 M596 400 Q620 450 596 500" stroke="#7B6A8F" stroke-width="5" stroke-linecap="round" fill="none"></path>';
+    if (s.tail) o += '<g transform="translate(556 560)"><rect x="-16" y="-24" width="11" height="24" rx="5" fill="#E8A55A"></rect><rect x="2" y="-24" width="11" height="24" rx="5" fill="#E8A55A"></rect><ellipse cx="0" cy="-34" rx="22" ry="22" fill="#E8A55A"></ellipse><circle cx="8" cy="-40" r="14" fill="#FFF4E6"></circle></g>';
+    return o;
+  }
+
   function sceneSVG(raw) {
     var s = Object.assign({}, BASE, raw);
     var o = '<svg viewBox="0 0 680 680" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">';
@@ -298,6 +376,11 @@ button:focus-visible { outline: 4px solid #2C8C99; outline-offset: 3px; }
     o += '<g fill="#FFFFFF" opacity="0.9"><ellipse cx="140" cy="110" rx="56" ry="20"></ellipse><ellipse cx="180" cy="96" rx="36" ry="22"></ellipse><ellipse cx="380" cy="70" rx="44" ry="16"></ellipse></g>';
     o += '<path d="M0 470 Q170 380 340 450 T680 430 L680 680 L0 680Z" fill="#B9DB95"></path>';
     o += '<path d="M0 540 Q340 500 680 545 L680 680 L0 680Z" fill="#8CC56E"></path>';
+    if (s.room) o += roomSVG(s);
+    if (s.bed) o += bedSVG(s.bed);
+    if (s.table) o += tableSVG();
+    if (s.linen) o += linenSVG();
+    if (s.fort) o += fortBack(s);
     if (s.deck) o += '<rect x="0" y="515" width="680" height="165" fill="#EAD9B5"></rect><path d="M0 560 H680 M0 610 H680 M120 515 V680 M260 515 V680 M400 515 V680 M540 515 V680" stroke="#DCC79E" stroke-width="2"></path>';
     if (s.pool) o += '<rect x="0" y="600" width="680" height="80" fill="#6CC3E6"></rect><path d="M40 630 q20 -8 40 0 t40 0 M300 650 q20 -8 40 0 t40 0 M520 625 q20 -8 40 0 t40 0" stroke="#FFFFFF" stroke-width="3" fill="none"></path>';
     if (s.river) o += '<path d="M0 480 Q200 450 340 495 T680 480 L680 680 L0 680Z" fill="#6CC3E6"></path>';
@@ -327,7 +410,7 @@ button:focus-visible { outline: 4px solid #2C8C99; outline-offset: 3px; }
       o += '<path d="M500 210 Q446 305 406 405 Q352 545 150 572" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="10 10" fill="none"></path>';
     }
     if (s.mom) {
-      o += '<g transform="translate(130 300)"><rect x="-14" y="190" width="11" height="60" rx="5" fill="' + SHOE + '"></rect><rect x="3" y="190" width="11" height="60" rx="5" fill="' + SHOE + '"></rect>';
+      o += '<g transform="translate(' + (s.momX || 130) + ' 300)"><rect x="-14" y="190" width="11" height="60" rx="5" fill="' + SHOE + '"></rect><rect x="3" y="190" width="11" height="60" rx="5" fill="' + SHOE + '"></rect>';
       o += '<path d="M-30 86 L30 86 L42 196 L-42 196Z" fill="#6E7FD6"></path><rect x="-48" y="92" width="13" height="70" rx="6" fill="' + SKIN + '"></rect><rect x="35" y="92" width="13" height="70" rx="6" fill="' + SKIN + '" transform="rotate(-30 41 92)"></rect>';
       o += '<path d="M-38 70 Q-44 0 0 0 Q44 0 38 70Z" fill="' + HAIR + '"></path><circle cx="0" cy="46" r="32" fill="' + FACE + '"></circle><path d="M-32 40 Q-28 8 0 10 Q28 8 32 40 Q16 24 0 26 Q-16 24 -32 40Z" fill="' + HAIR + '"></path>';
       o += '<circle cx="-11" cy="50" r="3.5" fill="' + HAIR + '"></circle><circle cx="11" cy="50" r="3.5" fill="' + HAIR + '"></circle><path class="ln" d="M-8 62 Q0 68 8 62"></path></g>';
@@ -337,7 +420,7 @@ button:focus-visible { outline: 4px solid #2C8C99; outline-offset: 3px; }
     if (s.bowlW) o += '<path d="M' + (s.bowlW - 34) + ' 540 L' + (s.bowlW + 34) + ' 540 L' + (s.bowlW + 26) + ' 562 L' + (s.bowlW - 26) + ' 562Z" fill="#E2603F"></path><ellipse cx="' + s.bowlW + '" cy="540" rx="32" ry="6" fill="#6CC3E6"></ellipse>';
     if (s.zoom || s.zoomDog) o += '<path d="M40 420 H140 M20 470 H110 M60 520 H150" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"></path>';
     if (s.zoomDog) o += '<path d="M390 470 H450 M370 500 H440 M400 530 H450" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"></path>';
-    o += ruiyou(s) + ruiyun(s);
+    if (!s.hide) o += ruiyou(s) + ruiyun(s);
     if (s.dog) {
       o += corgi(s.dog);
       if (s.leash) {
@@ -345,6 +428,8 @@ button:focus-visible { outline: 4px solid #2C8C99; outline-offset: 3px; }
         o += '<path d="M' + h[0] + ' ' + h[1] + ' Q' + ((h[0] + cx) / 2) + ' ' + (Math.max(h[1], cy) + 40) + ' ' + cx + ' ' + cy + '" stroke="#E0412B" stroke-width="4" fill="none" stroke-linecap="round"></path>';
       }
     }
+    if (s.fort) o += fortFront(s);
+    if (s.ques) o += '<g fill="#E2603F" font-family="Fredoka, sans-serif" font-weight="600"><text x="540" y="290" font-size="54">?</text><text x="590" y="250" font-size="40">?</text></g>';
     if (s.ball) o += '<circle cx="470" cy="330" r="18" fill="#E0412B"></circle><path d="M454 322 Q470 338 486 322" stroke="#F5D33D" stroke-width="4" fill="none"></path><path d="M560 400 Q520 330 490 332" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="6 8" fill="none"></path>';
     if (s.hearts) o += '<g fill="#E2603F"><path transform="translate(360 400)" d="M0 10 C-20 -6 -12 -22 0 -12 C12 -22 20 -6 0 10Z"></path><path transform="translate(320 360) scale(.7)" d="M0 10 C-20 -6 -12 -22 0 -12 C12 -22 20 -6 0 10Z"></path><path transform="translate(400 350) scale(.8)" d="M0 10 C-20 -6 -12 -22 0 -12 C12 -22 20 -6 0 10Z"></path></g>';
     if (s.river) o += '<path d="M0 530 Q340 510 680 530 L680 680 L0 680Z" fill="#6CC3E6" opacity="0.92"></path><path d="M60 570 q20 -8 40 0 t40 0 M320 590 q20 -8 40 0 t40 0 M520 560 q20 -8 40 0 t40 0" stroke="#FFFFFF" stroke-width="3" fill="none"></path>';

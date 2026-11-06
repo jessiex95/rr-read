@@ -1,6 +1,6 @@
 # RR Story
 
-An iPad picture-book app for Ruiyou and Ruiyun. Three read-aloud stories at about a level-2 reading level: *Two Leaders*, *Splash Day* and *Mango's Day*.
+An iPad picture-book app for Ruiyou and Ruiyun. Four read-aloud stories at about a level-2 reading level: *Two Leaders*, *Splash Day*, *Mango's Day* and *The Blanket Fort*.
 
 - Tap any word to hear it; tap the speaker to hear the whole page with word-by-word highlighting.
 - Swipe or use the arrows to turn pages. Progress is saved on each iPad.
